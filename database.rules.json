@@ -1,0 +1,15 @@
+{
+  "rules": {
+    "sessions": {
+      "$sessionId": {
+        ".read": true,
+        ".write": true,
+        "messages": {
+          "$messageId": {
+            ".validate": "newData.hasChildren(['sessionId','senderId','createdAt','event'])"
+          }
+        }
+      }
+    }
+  }
+}

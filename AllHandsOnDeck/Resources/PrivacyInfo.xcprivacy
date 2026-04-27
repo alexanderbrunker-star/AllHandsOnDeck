@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Privacy Manifest for App Store submission. Apple requires this since
+  May 2024 for any app using "required reason API"s. Drop this file into
+  the iOS target, target membership ON.
+
+  We declare:
+   - UserDefaults access — for storing the user's display name, mock toggle,
+     allowWebJoin preference, joinBaseURL override.
+   - File timestamp APIs are NOT used directly.
+   - Disk space APIs are NOT used.
+   - System boot time is NOT used.
+
+  We do NOT declare any tracking — the app has no analytics, no SDKs,
+  no identifiers shared off-device. Sessions are ephemeral.
+-->
+<plist version="1.0">
+<dict>
+    <key>NSPrivacyTracking</key>
+    <false/>
+    <key>NSPrivacyTrackingDomains</key>
+    <array/>
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array/>
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <!-- CA92.1 — Access info from same app, per documentation -->
+                <string>CA92.1</string>
+            </array>
+        </dict>
+    </array>
+</dict>
+</plist>

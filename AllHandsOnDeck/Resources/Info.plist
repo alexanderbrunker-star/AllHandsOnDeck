@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>All Hands</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>All Hands on Deck</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>app.captainleopard.allhands</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>allhands</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_allhands._tcp</string>
+		<string>_allhands._udp</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>All Hands on Deck nutzt die Kamera, um den Bildausschnitt live an deine Crew zu streamen — und um QR-Codes zum Beitreten zu scannen.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Findet andere iPhones in der Nähe für die Live-Vorschau eurer Gruppenfoto-Session.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Damit das fertige Gruppenfoto in deiner Mediathek landet.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>
