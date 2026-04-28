@@ -1,8 +1,43 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SessionClient } from './SessionClient';
 import { ReactionStrip } from './ReactionStrip';
 import { getOrAssignRank } from './pirateRank';
+
+// Isolated frame viewer — updates img.src via DOM ref so the parent never
+// re-renders at 3fps. Only re-renders once when the first frame arrives.
+const FrameImage = memo(function FrameImage({ client }: { client: SessionClient }) {
+  const imgRef   = useRef<HTMLImageElement>(null);
+  const shownRef = useRef(!!client.latestFrameURL);
+  const [hasFrame, setHasFrame] = useState(!!client.latestFrameURL);
+
+  useEffect(() => {
+    return client.subscribeFrame((url) => {
+      if (imgRef.current) imgRef.current.src = url;
+      if (!shownRef.current) {
+        shownRef.current = true;
+        setHasFrame(true);
+      }
+    });
+  }, [client]);
+
+  return (
+    <>
+      <img
+        ref={imgRef}
+        src={hasFrame ? (client.latestFrameURL ?? '') : ''}
+        alt="Live preview"
+        style={{ display: hasFrame ? undefined : 'none' }}
+      />
+      {!hasFrame && (
+        <div className="center-stack">
+          <div className="placeholder-art">📷</div>
+          <p className="subtitle">Warte auf Captain&apos;s Bildausschnitt…</p>
+        </div>
+      )}
+    </>
+  );
+});
 
 export function JoinPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -19,6 +54,7 @@ export function JoinPage() {
   useEffect(() => { setDismissedPhoto(false); }, [client.finalPhotoURL]);
 
   useEffect(() => {
+    // General events only — frame updates are handled by FrameImage via subscribeFrame.
     const unsub = client.subscribe(() => force(n => n + 1));
     client.connect();
     return () => {
@@ -70,14 +106,7 @@ export function JoinPage() {
 
   return (
     <div className="preview-stage">
-      {client.latestFrameURL ? (
-        <img src={client.latestFrameURL} alt="Live preview" />
-      ) : (
-        <div className="center-stack">
-          <div className="placeholder-art">📷</div>
-          <p className="subtitle">Warte auf Captain&apos;s Bildausschnitt…</p>
-        </div>
-      )}
+      <FrameImage client={client} />
 
       <div className="scrim-top" />
       <div className="scrim-bottom" />

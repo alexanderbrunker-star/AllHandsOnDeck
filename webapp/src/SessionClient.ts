@@ -1,8 +1,9 @@
 import { db } from './firebase';
 import { ref, onChildAdded, onValue, push, off, DatabaseReference, Unsubscribe } from 'firebase/database';
 import type { WireEnvelope, WireEvent, PhotoSessionDTO } from './wire';
+import { applyEvent, initialState, type SessionState, type SessionStatus } from './sessionState';
 
-type Status = 'idle' | 'connecting' | 'connected' | 'lost' | 'ended' | 'notFound';
+type Status = SessionStatus;
 type Listener = (state: SessionClient) => void;
 
 function uuid(): string {
@@ -14,15 +15,18 @@ export class SessionClient {
   readonly sessionId: string;
   readonly participantId = uuid();
 
-  status: Status = 'idle';
-  metadata?: PhotoSessionDTO;
+  private state: SessionState = initialState;
+  get status(): Status               { return this.state.status; }
+  get metadata(): PhotoSessionDTO | undefined { return this.state.metadata; }
+  get countdownTargetMs(): number | undefined { return this.state.countdownTargetMs; }
+  get countdownDuration(): number | undefined { return this.state.countdownDuration; }
+
   latestFrameURL?: string;
-  countdownTargetMs?: number;
-  countdownDuration?: number;
   finalPhotoURL?: string;
 
   private lastFrameURL?: string;
   private listeners = new Set<Listener>();
+  private frameListeners = new Set<(url: string) => void>();
 
   // Firebase refs & unsubscribe handles
   private messagesRef?: DatabaseReference;
@@ -43,9 +47,16 @@ export class SessionClient {
   }
   private notify() { for (const l of this.listeners) l(this); }
 
+  /** Subscribe only to preview frame updates (fires at ~3fps; does not trigger general listeners). */
+  subscribeFrame(l: (url: string) => void): () => void {
+    this.frameListeners.add(l);
+    return () => { this.frameListeners.delete(l); };
+  }
+  private notifyFrame(url: string) { for (const l of this.frameListeners) l(url); }
+
   connect() {
     if (this.status !== 'idle') return;
-    this.status = 'connecting';
+    this.state = { ...this.state, status: 'connecting' };
     this.notify();
 
     this.messagesRef = ref(db, `sessions/${this.sessionId}/messages`);
@@ -61,7 +72,7 @@ export class SessionClient {
 
     // Announce after listeners are attached so the host's reply is never missed.
     this.announceJoin();
-    this.status = 'connected';
+    this.state = { ...this.state, status: 'connected' };
     this.notify();
 
     // Stream latest preview frame (host overwrites this node at ~3 fps).
@@ -71,7 +82,8 @@ export class SessionClient {
       const event = env.event;
       if ('previewFrame' in event) {
         this.applyFrame(event.previewFrame.jpeg);
-        this.notify();
+        // Frame updates go to subscribeFrame listeners only — not general listeners —
+        // so JoinPage doesn't re-render at 3fps from frames.
       }
     });
   }
@@ -79,7 +91,7 @@ export class SessionClient {
   disconnect() {
     if (this.messagesRef && this.msgUnsub) { off(this.messagesRef); this.msgUnsub = undefined; }
     if (this.frameRef   && this.frameUnsub) { off(this.frameRef);   this.frameUnsub = undefined; }
-    this.status = 'idle';
+    this.state = { ...this.state, status: 'idle' };
     this.notify();
   }
 
@@ -124,19 +136,10 @@ export class SessionClient {
   // ── Inbound ────────────────────────────────────────────────────────────────
 
   private handleEvent(event: WireEvent) {
-    if ('sessionMetadata' in event) {
-      this.metadata = event.sessionMetadata;
-    } else if ('countdownStarted' in event) {
-      this.countdownTargetMs  = Date.parse(event.countdownStarted.photoAt);
-      this.countdownDuration  = event.countdownStarted.duration;
-    } else if ('countdownCancelled' in event) {
-      this.countdownTargetMs = undefined;
-    } else if ('photoCaptured' in event) {
-      this.countdownTargetMs = undefined;
-    } else if ('finalPhotoAvailable' in event) {
-      this.applyFinalPhoto(event.finalPhotoAvailable.jpeg);
-    } else if ('sessionEnded' in event) {
-      this.status = 'ended';
+    const previousFinal = this.state.finalPhotoBase64;
+    this.state = applyEvent(this.state, event);
+    if (this.state.finalPhotoBase64 && this.state.finalPhotoBase64 !== previousFinal) {
+      this.applyFinalPhoto(this.state.finalPhotoBase64);
     }
     this.notify();
   }
@@ -147,6 +150,7 @@ export class SessionClient {
     if (this.lastFrameURL) URL.revokeObjectURL(this.lastFrameURL);
     this.lastFrameURL  = url;
     this.latestFrameURL = url;
+    this.notifyFrame(url);
   }
 
   private applyFinalPhoto(base64: string) {
