@@ -16,6 +16,10 @@ on:
 permissions:
   contents: read
 
+# Opt JS-based actions into Node 24; Node 20 is being removed Sep 2026.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -27,7 +31,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: server/package-lock.json
 

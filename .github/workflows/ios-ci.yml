@@ -20,6 +20,10 @@ on:
 permissions:
   contents: read
 
+# Opt JS-based actions into Node 24; Node 20 is being removed Sep 2026.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   build-test:
     runs-on: macos-14
@@ -52,19 +56,29 @@ jobs:
       - name: Pick a destination simulator
         id: sim
         run: |
-          # Prefer modern iPhones; fall back to whatever's installed.
-          DEST=""
+          # Pin to a specific (name, OS) pair — `OS=latest` triggers xcodebuild's
+          # "multiple matching destinations" warning when several runtimes are installed.
+          PICKED_NAME=""
+          PICKED_OS=""
           for NAME in "iPhone 17" "iPhone 16" "iPhone 15" "iPhone 14"; do
-            if xcrun simctl list devices available | grep -q "$NAME ("; then
-              DEST="platform=iOS Simulator,name=$NAME,OS=latest"
+            # First match per device wins; jq isn't always present, so parse with awk.
+            OS_VER="$(xcrun simctl list devices available \
+              | awk -v name="$NAME" '
+                  /^-- iOS / { ver=$3; next }
+                  $0 ~ name " \\(" && ver != "" { print ver; exit }
+                ')"
+            if [ -n "$OS_VER" ]; then
+              PICKED_NAME="$NAME"
+              PICKED_OS="$OS_VER"
               break
             fi
           done
-          if [ -z "$DEST" ]; then
+          if [ -z "$PICKED_NAME" ]; then
             echo "::error::No supported iPhone simulator available"
             xcrun simctl list devices available
             exit 1
           fi
+          DEST="platform=iOS Simulator,name=$PICKED_NAME,OS=$PICKED_OS"
           echo "Using destination: $DEST"
           echo "destination=$DEST" >> "$GITHUB_OUTPUT"
 
