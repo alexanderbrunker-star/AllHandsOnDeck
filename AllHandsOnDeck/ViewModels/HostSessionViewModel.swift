@@ -64,6 +64,13 @@ final class HostSessionViewModel: ObservableObject {
         )
         participants = [hostParticipant]
         session.participants = [hostParticipant]
+
+        // Start the capture session immediately if already authorized — it runs on
+        // sessionQueue so this returns instantly. By the time the navigation push
+        // animation completes (~0.35s) the session is live and the preview is ready.
+        if self.camera.authorization == .authorized {
+            self.camera.start()
+        }
     }
 
     // MARK: - Lifecycle

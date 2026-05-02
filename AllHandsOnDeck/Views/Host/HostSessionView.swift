@@ -471,6 +471,10 @@ private struct CameraAuthBranch: View {
                         .allowsHitTesting(false)
                 }
             }
+            // Fade in once the session is running — hides the brief black frame
+            // while AVCaptureSession.startRunning() completes on sessionQueue.
+            .opacity(camera.isRunning ? 1 : 0)
+            .animation(.easeIn(duration: 0.25), value: camera.isRunning)
         } else if camera.authorization == .denied {
             PermissionView {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
