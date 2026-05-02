@@ -39,8 +39,8 @@ targets:
     info:
       path: AllHandsOnDeck/Resources/Info.plist
       properties:
-        CFBundleName: AllHandsOnDeck
-        CFBundleDisplayName: AllHandsOnDeck
+        CFBundleName: Crew Photo
+        CFBundleDisplayName: Crew Photo
         NSCameraUsageDescription: "All Hands On Deck uses the camera to stream a live viewfinder to your crew and to scan QR codes for joining sessions."
         NSPhotoLibraryAddUsageDescription: "Saves the final crew photo to your photo library."
         NSLocalNetworkUsageDescription: "Finds nearby iPhones for the live crew photo preview session."
