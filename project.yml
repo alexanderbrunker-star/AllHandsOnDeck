@@ -9,7 +9,7 @@ options:
   createIntermediateGroups: true
   xcodeVersion: "16.0"
   groupSortPosition: top
-  developmentLanguage: de
+  developmentLanguage: en
   organizationName: "Alexander Brunker"
 
 # ─── Shared build settings ───────────────────────────────────────────────────
@@ -41,9 +41,9 @@ targets:
       properties:
         CFBundleName: AllHandsOnDeck
         CFBundleDisplayName: AllHandsOnDeck
-        NSCameraUsageDescription: "AllHandsOnDeck nutzt die Kamera, um den Bildausschnitt live an deine Crew zu streamen — und um QR-Codes zum Beitreten zu scannen."
-        NSPhotoLibraryAddUsageDescription: "Damit das fertige Gruppenfoto in deiner Mediathek landet."
-        NSLocalNetworkUsageDescription: "Findet andere iPhones in der Nähe für die Live-Vorschau eurer Gruppenfoto-Session."
+        NSCameraUsageDescription: "All Hands On Deck uses the camera to stream a live viewfinder to your crew and to scan QR codes for joining sessions."
+        NSPhotoLibraryAddUsageDescription: "Saves the final crew photo to your photo library."
+        NSLocalNetworkUsageDescription: "Finds nearby iPhones for the live crew photo preview session."
         NSBonjourServices:
           - _allhands._tcp
           - _allhands._udp

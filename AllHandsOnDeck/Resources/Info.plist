@@ -39,11 +39,11 @@
 		<string>_allhands._udp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>AllHandsOnDeck nutzt die Kamera, um den Bildausschnitt live an deine Crew zu streamen — und um QR-Codes zum Beitreten zu scannen.</string>
+	<string>All Hands On Deck uses the camera to stream a live viewfinder to your crew and to scan QR codes for joining sessions.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Findet andere iPhones in der Nähe für die Live-Vorschau eurer Gruppenfoto-Session.</string>
+	<string>Finds nearby iPhones for the live crew photo preview session.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Damit das fertige Gruppenfoto in deiner Mediathek landet.</string>
+	<string>Saves the final crew photo to your photo library.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>
