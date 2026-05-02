@@ -54,7 +54,8 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UIRequiresFullScreen: true
-        UILaunchScreen: {}            # Solid launch screen (no storyboard needed)
+        UILaunchScreen:
+          UIColorName: LaunchBackground   # matches Theme.abyss — no white flash on cold launch
         UIApplicationSupportsIndirectInputEvents: true
         # App Store export-compliance shortcut: HTTPS-only counts as exempt
         # so we don't need a per-release encryption-export filing.

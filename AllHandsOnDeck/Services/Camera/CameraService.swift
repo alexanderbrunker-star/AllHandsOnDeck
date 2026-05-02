@@ -103,6 +103,19 @@ final class CameraService: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Init
+
+    override init() {
+        super.init()
+        // Resolve already-granted authorization synchronously so the first SwiftUI
+        // render sees .authorized and can skip the priming screen entirely.
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:           authorization = .authorized
+        case .denied, .restricted:  authorization = .denied
+        default:                    break
+        }
+    }
+
     // MARK: - Permissions
 
     func requestPermissionIfNeeded() async {
