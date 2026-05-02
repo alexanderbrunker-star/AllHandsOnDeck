@@ -68,9 +68,7 @@ final class HostSessionRetention: ObservableObject {
         let vm = parkedVM
         parkedVM = nil
         activeToken = nil
-        Task { @MainActor [weak self] in
-            self?.remainingSeconds = nil
-        }
+        remainingSeconds = nil
         return vm
     }
 
