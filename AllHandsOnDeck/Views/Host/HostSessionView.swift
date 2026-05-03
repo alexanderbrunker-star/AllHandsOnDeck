@@ -107,17 +107,26 @@ struct HostSessionView: View {
                     .transition(.opacity)
             }
 
-            // Popups stacked: crew ABOVE QR, both at top
-            VStack(spacing: 12) {
-                if crewOpen { crewPopup }
-                if showQR {
+            // Crew popup in UPPER area — liquid glass, camera visible through blur
+            if crewOpen {
+                VStack(spacing: 0) {
+                    Spacer().frame(height: 60)
+                    crewPopup
+                    Spacer()
+                }
+                .transition(.opacity)
+            }
+
+            // QR popup in LOWER area — liquid glass, camera visible through blur
+            if showQR {
+                VStack(spacing: 0) {
+                    Spacer()
                     QRCodePanelView(payload: vm.qrPayload, sessionID: vm.session.id)
                         .frame(maxWidth: 260)
-                        .transition(.scale.combined(with: .opacity))
+                    Spacer().frame(height: 80)
                 }
+                .transition(.opacity)
             }
-            .padding(.top, 60)
-            .frame(maxWidth: .infinity, alignment: .top)
 
             if showDebugOverlays {
                 DebugOverlayView()
@@ -157,6 +166,7 @@ struct HostSessionView: View {
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: showQR)
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: showSettings)
+        .animation(.spring(response: 0.4, dampingFraction: 0.85), value: crewOpen)
     }
 
     // MARK: - Chrome
