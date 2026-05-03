@@ -71,3 +71,57 @@ cd webapp && npm run build && npm test
 # Deploy webapp
 cd webapp && npx firebase deploy --only hosting
 ```
+
+---
+## Agents-Konfiguration (Dual-Model)
+
+Dieses Projekt verwendet einen **Advisor-Strategy-Ansatz** mit zwei Modellen:
+
+| Agent | Modell | Zweck |
+|-------|--------|-------|
+| **Flash** | deepseek-v4-flash | Schnelle, kleine Aufgaben, Analyse, Planung |
+| **Pro** | deepseek-v4-pro | Komplexe Code-Änderungen, Refactoring, kritische Tools |
+
+### Wechsel-Trigger (Flash → Pro)
+
+| Trigger | Beschreibung |
+|---------|-------------|
+| Code-Änderungen >100 Zeilen oder mehrere Dateien | → Pro |
+| Refactoring mit Abhängigkeitsanalyse | → Pro |
+| Produktions-Tools (Git-Push, Firebase-Deploy, PR-Merge) | → Pro |
+| Fehlerbehebung >3 Iterationen | → Pro |
+| Flash erkennt selbst: mehr logische Tiefe nötig | → Pro |
+
+Flash bleibt für: Fragen beantworten, Status abfragen, Pläne erstellen, einfache Edits.
+
+---
+## Vorne — Versionsänderungen & Redesigns
+
+*Hier werden grundlegende Änderungen, Redesigns und Versionssprünge dokumentiert.*
+
+| Datum | Version | Grund | Agent |
+|-------|---------|-------|-------|
+| 2026-05-03 | 2.3.4 → 2.3.9 | DesignLabels-Zentralisierung, Viewer-Crew-Popup, Retake-Fix, Countdown-Sync, QR-Piratenflagge, Adaptive Grid | Pro |
+
+---
+## Mittig — Große Jobs & Komplexität (Pro)
+
+*Hier werden komplexe Aufgaben, Tool-Nutzungen und Pro-Einsätze dokumentiert.*
+
+| Datum | Issue | Beschreibung | Status |
+|-------|-------|-------------|--------|
+| 2026-05-03 | APP-69 | Host View: crew icon round + popup above QR | PR #31 In Review |
+| 2026-05-03 | APP-46–56 | 11 Issues: DesignLabels, Viewer/Host Crew Popups, QR, Countdown, Webapp | ✅ Gemerged PR #18 |
+| 2026-05-03 | — | Linear + GitHub Workflow-Initialisierung (23 Issues) | ✅ Done |
+
+---
+## Hinten — Kleine Aufgaben & Änderungen (Flash)
+
+*Hier werden schnelle, unkomplizierte Aufgaben und Flash-Einsätze dokumentiert.*
+
+| Datum | Aufgabe | Agent |
+|-------|---------|-------|
+| 2026-05-03 | AGENTS.md Dual-Modell-Konfiguration + Restrukturierung | Flash |
+| 2026-05-03 | Cleanup .DS_Store + .gitignore | Flash |
+| 2026-05-03 | PR #18 mergen (11 Issues finalisiert) | Pro |
+| 2026-05-03 | 23 Linear-Issues → Done gesetzt | Pro |
