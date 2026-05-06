@@ -90,6 +90,37 @@ final class HappyPathUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Share"].exists, "Share button missing")
     }
 
+    func test_hostChromeButtonsStayWithinSafeLayoutBands() throws {
+        tapStartCrewPhoto()
+        guard anyHostSessionElementExists() else {
+            XCTFail("Host session not reached"); return
+        }
+
+        let screen = app.frame
+        let topBand = screen.minY + 24...screen.minY + 180
+        let bottomBand = screen.maxY - 150...screen.maxY - 20
+
+        let topButtons = [
+            app.buttons["host_back"],
+            app.buttons["host_settings"],
+            app.buttons["host_qr_toggle"]
+        ]
+        let bottomButtons = [
+            app.buttons["host_start_timer"],
+            app.buttons["host_capture_now"]
+        ]
+
+        for button in topButtons {
+            XCTAssertTrue(button.waitForExistence(timeout: 5), "Missing top chrome button: \(button)")
+            assertButton(button, staysInside: topBand, axis: .vertical)
+        }
+
+        for button in bottomButtons {
+            XCTAssertTrue(button.waitForExistence(timeout: 5), "Missing bottom chrome button: \(button)")
+            assertButton(button, staysInside: bottomBand, axis: .vertical)
+        }
+    }
+
     // MARK: - Viewer: Crew Interaction ──────────────────────────────────────────
 
     func test_joinSession_reachesViewerSessionView() throws {
@@ -171,10 +202,11 @@ final class HappyPathUITests: XCTestCase {
             XCTFail("Host session not reached"); return
         }
         let backBtn = app.buttons["host_back"]
-        if backBtn.waitForExistence(timeout: 5) {
-            backBtn.tap()
-            XCTAssertTrue(app.buttons["Start Crew Photo"].waitForExistence(timeout: 5))
-        }
+        let fallbackBackBtn = app.buttons["Back"]
+        let button = backBtn.waitForExistence(timeout: 5) ? backBtn : fallbackBackBtn
+        XCTAssertTrue(button.waitForExistence(timeout: 5), "Host back button missing")
+        button.tap()
+        XCTAssertTrue(app.buttons["host_start_crew_photo"].waitForExistence(timeout: 5))
     }
 
     // MARK: - Deep Link ─────────────────────────────────────────────────────────
@@ -214,5 +246,27 @@ final class HappyPathUITests: XCTestCase {
         let connect = app.buttons["Connect"]
         if connect.waitForExistence(timeout: 5) { connect.tap() }
         sleep(4)
+    }
+
+    private enum LayoutAxis {
+        case vertical
+    }
+
+    private func assertButton(
+        _ button: XCUIElement,
+        staysInside band: ClosedRange<CGFloat>,
+        axis: LayoutAxis,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let frame = button.frame
+        XCTAssertGreaterThan(frame.width, 24, "Button has no usable width: \(button)", file: file, line: line)
+        XCTAssertGreaterThan(frame.height, 24, "Button has no usable height: \(button)", file: file, line: line)
+
+        switch axis {
+        case .vertical:
+            XCTAssertGreaterThanOrEqual(frame.minY, band.lowerBound, "Button is too high: \(button)", file: file, line: line)
+            XCTAssertLessThanOrEqual(frame.maxY, band.upperBound, "Button is too low: \(button)", file: file, line: line)
+        }
     }
 }
