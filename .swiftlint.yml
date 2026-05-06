@@ -1,4 +1,5 @@
 # SwiftLint Rules — All Hands on Deck
+baseline: SwiftLintBaseline.json
 
 opt_in_rules:
   - empty_count
