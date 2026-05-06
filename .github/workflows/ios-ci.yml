@@ -99,6 +99,7 @@ jobs:
             -project AllHandsOnDeck.xcodeproj \
             -scheme "$SCHEME" \
             -destination "${{ steps.sim.outputs.destination }}" \
+            -only-testing:AllHandsOnDeckTests \
             -enableCodeCoverage YES \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO \
@@ -106,6 +107,19 @@ jobs:
             CODE_SIGN_IDENTITY= \
             DEVELOPMENT_TEAM= \
             | xcbeautify --renderer github-actions
+
+      - name: Run UI tests (XCUITest — no sign-in needed)
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project AllHandsOnDeck.xcodeproj \
+            -scheme "$SCHEME" \
+            -destination "${{ steps.sim.outputs.destination }}" \
+            -only-testing:AllHandsOnDeckUITests/HappyPathUITests/test_homeScreen_hasAllButtons \
+            -only-testing:AllHandsOnDeckUITests/HappyPathUITests/test_hostChromeButtonsStayWithinSafeLayoutBands \
+            -only-testing:AllHandsOnDeckUITests/HappyPathUITests/test_navigationBack_fromHostSession \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions --quiet
 
       - name: Upload xcresult bundle
         if: always()

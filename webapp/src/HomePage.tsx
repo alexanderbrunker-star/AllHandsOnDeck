@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DesignLabels } from './DesignLabels';
 
-const APP_VERSION = '2.3.9';
-
 export function HomePage() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
@@ -15,7 +13,7 @@ export function HomePage() {
       <p className="subtitle">{DesignLabels.homeSubtitle}</p>
       <input
         className="id-input"
-        placeholder="ABCDEF1234"
+        placeholder={DesignLabels.sessionCodePlaceholder}
         value={code}
         onChange={e => setCode(e.target.value.toUpperCase())}
         autoCapitalize="characters"
