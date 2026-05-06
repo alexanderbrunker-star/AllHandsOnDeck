@@ -87,17 +87,6 @@ struct HostSessionView: View {
                 .transition(.opacity)
             }
 
-            // Chrome (topBar + bottomBar) ON TOP of backdrop — buttons always reachable
-            VStack(spacing: 0) {
-                topBar
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                Spacer()
-                bottomBar
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 12)
-            }
-
             // Centered floating zoom HUD
             ZoomLabelView(camera: vm.camera, visible: showZoomLabel)
 
@@ -137,6 +126,21 @@ struct HostSessionView: View {
 
             if showDebugOverlays {
                 DebugOverlayView()
+            }
+
+            GeometryReader { proxy in
+                VStack(spacing: 0) {
+                    topBar
+                        .padding(.horizontal, 16)
+                        .padding(.top, max(proxy.safeAreaInsets.top, 24) + 8)
+                        .padding(.bottom, 8)
+
+                    Spacer()
+
+                    bottomBar
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, max(proxy.safeAreaInsets.bottom, 8) + 12)
+                }
             }
 
         }
@@ -256,6 +260,8 @@ struct HostSessionView: View {
 
                 Spacer(minLength: 8)
 
+                qrToggleButton
+
                 Button {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) { crewOpen.toggle() }
                 } label: {
@@ -290,26 +296,12 @@ struct HostSessionView: View {
                         .background(.ultraThinMaterial, in: Circle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Settings")
-                .accessibilityHint("Open timer, permissions, grid and HD options")
+                .accessibilityLabel(DesignLabels.settings)
+                .accessibilityHint(DesignLabels.settingsHint)
                 .accessibilityIdentifier("host_settings")
             }
 
             HStack(spacing: 10) {
-                Button {
-                    withAnimation { showQR.toggle() }
-                } label: {
-                    Image(systemName: showQR ? "qrcode" : "qrcode.viewfinder")
-                        .font(.system(size: 16, weight: .heavy))
-                        .foregroundStyle(showQR ? .black : Theme.bone)
-                        .frame(width: 40, height: 40)
-                        .background(showQR ? AnyShapeStyle(Theme.goldShine) : AnyShapeStyle(.ultraThinMaterial), in: Circle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(showQR ? "Hide QR code" : "Show QR code")
-                .accessibilityHint("Lets crew members scan to join the session")
-                .accessibilityIdentifier("host_qr_toggle")
-
                 LensSelectorView(camera: vm.camera, onSelect: { lens in
                     vm.camera.switchLens(lens)
                     switch lens {
@@ -333,21 +325,37 @@ struct HostSessionView: View {
         }
     }
 
+    private var qrToggleButton: some View {
+        Button {
+            withAnimation { showQR.toggle() }
+        } label: {
+            Image(systemName: showQR ? DesignLabels.iconQR : DesignLabels.iconQRScan)
+                .font(.system(size: 16, weight: .heavy))
+                .foregroundStyle(showQR ? .black : Theme.bone)
+                .frame(width: 40, height: 40)
+                .background(showQR ? AnyShapeStyle(Theme.goldShine) : AnyShapeStyle(.ultraThinMaterial), in: Circle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(showQR ? DesignLabels.hideQRCode : DesignLabels.showQRCode)
+        .accessibilityHint(DesignLabels.qrToggleHint)
+        .accessibilityIdentifier("host_qr_toggle")
+    }
+
     private var backButton: some View {
         Button {
             closeHostSession()
         } label: {
-            Image(systemName: "chevron.backward")
+            Label(DesignLabels.back, systemImage: "chevron.backward")
+                .labelStyle(.iconOnly)
                 .font(.system(size: 16, weight: .heavy))
                 .foregroundStyle(Theme.bone)
+                .frame(width: 44, height: 44)
+                .background(.ultraThinMaterial, in: Circle())
         }
-        .frame(width: 44, height: 44)
-        .background(.ultraThinMaterial, in: Circle())
         .buttonStyle(.plain)
         .contentShape(Rectangle())
-        .accessibilityElement(children: .ignore)
         .accessibilityLabel(DesignLabels.back)
-        .accessibilityHint("Returns to the home screen")
+        .accessibilityHint(DesignLabels.backHint)
         .accessibilityIdentifier("host_back")
     }
 
