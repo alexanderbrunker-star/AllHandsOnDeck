@@ -137,8 +137,8 @@ final class HappyPathUITests: XCTestCase {
         // Reaction strip should contain multiple reaction buttons
         let reactions = ["Ready", "Wait a moment", "Again", "Camera up"]
         var found = 0
-        for label in reactions {
-            if app.buttons[label].waitForExistence(timeout: 3) { found += 1 }
+        for label in reactions where app.buttons[label].waitForExistence(timeout: 3) {
+            found += 1
         }
         XCTAssertTrue(found >= 2, "Expected at least 2 reaction buttons, found \(found)")
     }
@@ -164,7 +164,7 @@ final class HappyPathUITests: XCTestCase {
             sleep(1)
             // Crew popup should show participants or a backdrop
             // Just verify the app doesn't crash
-            XCTAssertTrue(app.buttons.count > 0)
+            XCTAssertFalse(app.buttons.allElementsBoundByIndex.isEmpty)
             // Tap outside to dismiss
             app.tap()
         }

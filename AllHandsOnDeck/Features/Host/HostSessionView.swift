@@ -273,7 +273,7 @@ struct HostSessionView: View {
                     .frame(width: 36, height: 36)
                     .background(crewOpen ? AnyShapeStyle(Theme.goldShine) : AnyShapeStyle(.ultraThinMaterial), in: Circle())
                     .overlay(alignment: .topTrailing) {
-                        if vm.participants.count > 0 {
+                        if !vm.participants.isEmpty {
                             Text("\(vm.participants.count)")
                                 .font(.system(size: 9, weight: .heavy, design: .rounded))
                                 .foregroundStyle(.black)
@@ -771,7 +771,7 @@ private struct LensSelectorView: View {
     private func label(for lens: CameraService.LensType, active: Bool) -> String {
         switch lens {
         case .ultraWide: return active ? ".5×" : ".5"
-        case .wide:      return active ? "1×"  : "1"
+        case .wide:      return active ? "1×" : "1"
         case .tele:
             let n = max(2, Int(camera.teleEquivalentZoom.rounded()))
             return active ? "\(n)×" : "\(n)"
