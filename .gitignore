@@ -11,9 +11,11 @@ build/
 # Node
 node_modules/
 dist/
+*.tsbuildinfo
 
 # Env
 .env
 .env.local
 .claude/
 .DS_Store
+Secrets.xcconfig
