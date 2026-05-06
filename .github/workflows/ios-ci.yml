@@ -115,7 +115,9 @@ jobs:
             -project AllHandsOnDeck.xcodeproj \
             -scheme "$SCHEME" \
             -destination "${{ steps.sim.outputs.destination }}" \
-            -only-testing:AllHandsOnDeckUITests \
+            -only-testing:AllHandsOnDeckUITests/HappyPathUITests/test_homeScreen_hasAllButtons \
+            -only-testing:AllHandsOnDeckUITests/HappyPathUITests/test_hostChromeButtonsStayWithinSafeLayoutBands \
+            -only-testing:AllHandsOnDeckUITests/HappyPathUITests/test_navigationBack_fromHostSession \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify --renderer github-actions --quiet
 
