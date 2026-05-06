@@ -129,18 +129,7 @@ struct HostSessionView: View {
             }
 
             GeometryReader { proxy in
-                VStack(spacing: 0) {
-                    topBar
-                        .padding(.horizontal, 16)
-                        .padding(.top, max(proxy.safeAreaInsets.top, 24) + 8)
-                        .padding(.bottom, 8)
-
-                    Spacer()
-
-                    bottomBar
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, max(proxy.safeAreaInsets.bottom, 8) + 12)
-                }
+                hostChrome(in: proxy)
             }
 
         }
@@ -230,6 +219,23 @@ struct HostSessionView: View {
         .padding(14)
         .frame(width: 260)
         .liquidGlass()
+    }
+
+    private func hostChrome(in proxy: GeometryProxy) -> some View {
+        VStack(spacing: 0) {
+            topBar
+                .padding(.horizontal, Spacing.lg)
+                .padding(.top, max(proxy.safeAreaInsets.top, Spacing.xl) + Spacing.sm)
+                .padding(.bottom, Spacing.sm)
+
+            Spacer(minLength: 0)
+
+            bottomBar
+                .padding(.horizontal, Spacing.lg)
+                .padding(.bottom, max(proxy.safeAreaInsets.bottom, Spacing.sm) + Spacing.md)
+        }
+        .frame(width: proxy.size.width, height: proxy.size.height, alignment: .top)
+        .clipped(antialiased: false)
     }
 
     private func flashZoomLabel() {
