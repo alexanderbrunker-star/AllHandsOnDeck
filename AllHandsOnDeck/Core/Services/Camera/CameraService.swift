@@ -86,6 +86,7 @@ final class CameraService: NSObject, ObservableObject {
     private final class FramePipeline {
         let lock = NSLock()
         var handler: (@Sendable (Data) -> Void)?
+        var sampleBufferHandler: (@Sendable (CMSampleBuffer) -> Void)?
         var lastEmit: Date = .distantPast
         let minInterval: TimeInterval = 1.0 / 3.0
         var isFrontCamera: Bool = false
@@ -100,6 +101,19 @@ final class CameraService: NSObject, ObservableObject {
             pipeline.lock.lock()
             pipeline.handler = previewFrameConsumer
             pipeline.lastEmit = .distantPast
+            pipeline.lock.unlock()
+        }
+    }
+
+    /// Optional second consumer that receives the raw `CMSampleBuffer` from the
+    /// video-data-output delegate, in addition to (not instead of) the JPEG
+    /// preview path. Used by `LiveKitHostPublisher` to feed a `BufferCapturer`
+    /// without disturbing Multipeer/Supabase preview broadcasting or the
+    /// in-frame detector.
+    var sampleBufferConsumer: (@Sendable (CMSampleBuffer) -> Void)? {
+        didSet {
+            pipeline.lock.lock()
+            pipeline.sampleBufferHandler = sampleBufferConsumer
             pipeline.lock.unlock()
         }
     }
@@ -498,12 +512,17 @@ extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate {
                                    from connection: AVCaptureConnection) {
         pipeline.lock.lock()
         let handler = pipeline.handler
+        let sampleBufferHandler = pipeline.sampleBufferHandler
         let last = pipeline.lastEmit
         let now = Date()
         let due = handler != nil && now.timeIntervalSince(last) >= pipeline.minInterval
         if due { pipeline.lastEmit = now }
         let front = pipeline.isFrontCamera
         pipeline.lock.unlock()
+
+        // Forward the raw CMSampleBuffer to LiveKit (full frame rate, no throttle).
+        // Independent of the JPEG preview path so Multipeer/Supabase keeps working.
+        sampleBufferHandler?(sampleBuffer)
 
         guard due, let handler else { return }
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
