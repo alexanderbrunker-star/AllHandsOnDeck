@@ -42,6 +42,10 @@ final class HostSessionViewModel: ObservableObject {
     private let watchTrigger = PassthroughSubject<Void, Never>()
     private var isStarted = false
 
+    /// Held strongly so the published track stays live for the session lifetime.
+    /// Only constructed when LiveKit beta is enabled and the session allows web join.
+    private var liveKitPublisher: LiveKitHostPublisher?
+
     // MARK: - Init
 
     init(hostName: String,
@@ -105,6 +109,33 @@ final class HostSessionViewModel: ObservableObject {
             try await transport.start(session: session)
         } catch {
             errorMessage = "Session konnte nicht gestartet werden."
+        }
+
+        // LiveKit beta path: when the build opts in AND this session allows web
+        // joiners, publish the camera feed to a LiveKit room so the webapp's
+        // <LiveKitVideo> viewer can subscribe. Strictly additive — the existing
+        // Supabase JPEG preview keeps flowing for native peers and as a fallback.
+        if LiveKitConfig.isBetaEnabled && session.allowWebJoin {
+            let publisher = LiveKitHostPublisher(
+                sessionID: session.id,
+                participantID: transport.localParticipantID
+            )
+            liveKitPublisher = publisher
+            camera.sampleBufferConsumer = { [weak publisher] buffer in
+                publisher?.ingest(sampleBuffer: buffer)
+            }
+            Task { [weak self] in
+                do {
+                    try await publisher.start()
+                } catch {
+                    // Non-fatal: the native preview path keeps working. We surface
+                    // the error so the dev console catches it but don't block the
+                    // session UI on a LiveKit failure.
+                    await MainActor.run {
+                        self?.errorMessage = "LiveKit beta unavailable: \(error.localizedDescription)"
+                    }
+                }
+            }
         }
 
         // In mock mode, generate synthetic preview frames since the
@@ -216,7 +247,12 @@ final class HostSessionViewModel: ObservableObject {
         mockFrameTask?.cancel()
         reactionDismissTask?.cancel()
         camera.previewFrameConsumer = nil
+        camera.sampleBufferConsumer = nil
         camera.stop()
+        if let publisher = liveKitPublisher {
+            liveKitPublisher = nil
+            Task { await publisher.stop() }
+        }
         Task { await transport.send(.sessionEnded) }
         transport.stop()
     }

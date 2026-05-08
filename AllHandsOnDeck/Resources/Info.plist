@@ -33,6 +33,10 @@
 	<string>1</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LIVEKIT_BETA_ENABLED</key>
+	<string>$(LIVEKIT_BETA_ENABLED)</string>
+	<key>LIVEKIT_TOKEN_ENDPOINT</key>
+	<string>$(LIVEKIT_TOKEN_ENDPOINT)</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_allhands._tcp</string>
@@ -48,8 +52,6 @@
 	<string>$(SUPABASE_ANON_KEY)</string>
 	<key>SUPABASE_URL</key>
 	<string>$(SUPABASE_URL)</string>
-	<key>WEB_JOIN_BASE_URL</key>
-	<string>$(WEB_JOIN_BASE_URL)</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>
@@ -63,5 +65,7 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>WEB_JOIN_BASE_URL</key>
+	<string>$(WEB_JOIN_BASE_URL)</string>
 </dict>
 </plist>
