@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.105.3",
+    "@supabase/supabase-js": "^2.105.4",
     "livekit-server-sdk": "^2.15.2",
     "ws": "^8.20.0"
   },
