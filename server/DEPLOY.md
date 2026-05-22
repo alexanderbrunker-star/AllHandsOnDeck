@@ -1,7 +1,7 @@
-# Deploying the token server to Cloud Run
+# Deploying the optional token server to Cloud Run
 
 The server in this directory is a Node 22 HTTP + WebSocket server. The
-endpoint Firebase Hosting needs is `POST /api/livekit/token`; the same
+endpoint the Vercel webapp can call is `POST /api/livekit/token`; the same
 container also serves `/ws` for signaling and `/health` for liveness.
 
 Region used throughout: **europe-west1**. Service name: **allhands-token**.
@@ -86,30 +86,23 @@ gcloud builds submit --config server/cloudbuild.yaml \
   server/
 ```
 
-## 4. Wire the webapp to the deployed URL
+## 4. Wire the Vercel webapp to the deployed URL
 
-The webapp calls `/api/livekit/token` as a relative path. Two options:
+The preferred MVP path is the Supabase Edge Function:
 
-### Option A (recommended): Firebase Hosting rewrite
-
-Add the following to the project's `firebase.json` (replace the existing
-`rewrites` array). Hosting will proxy `/api/**` to the Cloud Run service
-on the same origin, so no CORS or env-var changes are needed in the webapp.
-
-```json
-"rewrites": [
-  { "source": "/api/**", "run": { "serviceId": "allhands-token", "region": "europe-west1" }},
-  { "source": "**", "destination": "/index.html" }
-]
+```text
+VITE_LIVEKIT_TOKEN_ENDPOINT=https://YOUR-PROJECT-REF.supabase.co/functions/v1/livekit-token
 ```
 
-Then `firebase deploy --only hosting`.
+If you deploy this optional Node server instead, set the Vercel environment
+variable to its public Cloud Run URL:
 
-### Option B: absolute URL via env var
+```text
+VITE_LIVEKIT_TOKEN_ENDPOINT=https://allhands-token-xxxxxxxx-ew.a.run.app/api/livekit/token
+```
 
-Set `VITE_TOKEN_ENDPOINT=https://allhands-token-xxxxxxxx-ew.a.run.app/api/livekit/token`
-in the webapp build and update `SessionClient.ts` to read it. This requires
-CORS on the server.
+This requires CORS on the server if the endpoint is on a different origin from
+the Vercel webapp.
 
 ## 5. Smoke test
 

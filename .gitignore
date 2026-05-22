@@ -12,6 +12,7 @@ build/
 node_modules/
 dist/
 *.tsbuildinfo
+.vercel/
 
 # Env
 .env

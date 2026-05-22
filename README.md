@@ -48,17 +48,17 @@ stored in Supabase.
 | Was | Wo ersetzen |
 |---|---|
 | Apple Team ID | `project.yml` → `TEAMID`, `server/public/.well-known/apple-app-site-association` |
-| Fly.io App-Name | `fly.toml` → `allhands-YOUR-NAME` |
-| Echte Domain | `project.yml` Entitlements, AASA, `fly.toml` |
+| Vercel Webapp URL | `WEB_JOIN_BASE_URL` / iOS `joinBaseURL` |
+| Echte Domain | `project.yml` Entitlements, AASA, Vercel Domain |
 | App-Icon (1024×1024 PNG) | `AllHandsOnDeck/Resources/Assets.xcassets/AppIcon.appiconset/` |
 
 ```bash
 # Projekt bauen
 xcodegen generate   # nach jeder Änderung an project.yml
 
-# Server deployen
-fly apps create allhands-<name>
-fly deploy
+# Webapp deployen
+# GitHub -> Vercel baut webapp/ per vercel.json.
+# Manuell: vercel --prod
 ```
 
 ---
@@ -69,7 +69,7 @@ fly deploy
 AllHandsOnDeck/        iOS App (SwiftUI)
 AllHandsOnDeckWatch/   Apple Watch Companion App (Step 6)
 AllHandsOnDeckTests/   XCTest unit tests (Step 9)
-server/                Node/TS WebSocket-Signaling/Relay + AASA + Static-Hosting
+server/                Optionaler Node/TS WebSocket-Signaling/Relay + AASA
 webapp/                Vite + React Web-Viewer (PWA-fähig)
 ```
 
@@ -261,7 +261,8 @@ Server-Setup:
 1. `server/public/.well-known/apple-app-site-association` anpassen:
    - `TEAMID` durch dein Apple-Team-ID ersetzen
    - Bundle-ID durch deine ersetzen
-2. Server-Binary deployen (z.B. Fly.io / Railway / DigitalOcean).
+2. Webapp auf Vercel deployen; optionalen Token-/Relay-Server auf Supabase
+   Edge Functions, Cloud Run, Fly.io, Railway oder DigitalOcean betreiben.
 3. HTTPS-Pflicht für Apple — meiste Plattformen liefern das automatisch.
 4. Validierung: `curl https://your-domain/.well-known/apple-app-site-association`
    muss `application/json` ausliefern.
@@ -310,17 +311,44 @@ Was nicht gecovert ist (AVFoundation, Multipeer, WebSocket, Vision) sind
 Integration-Pfade die Hardware oder Live-Server brauchen — manuell via die
 Test-Pläne oben durchziehen.
 
-### CI
+### CI / GitHub / Vercel
 
-Drei GitHub-Actions-Workflows in `.github/workflows/`:
+GitHub-Actions-Workflows in `.github/workflows/`:
 - `ios-ci.yml` — `xcodegen generate` + `xcodebuild test` auf macOS-14.
 - `webapp-ci.yml` — `npm ci` → `tsc -b` → `vitest run` → `vite build`.
 - `server-ci.yml` — `npm ci` → `tsc --noEmit` → `node:test` → `tsc` →
   `docker buildx` Smoke-Build des produktiven Images.
+- `vercel-webapp.yml` — Preview-Deploys für Pull Requests und Production-
+  Deploys bei Push auf `main`, wenn `ENABLE_VERCEL_DEPLOY=true` gesetzt ist.
 
 Jeder Workflow läuft nur, wenn der dazugehörige Pfad sich geändert hat
 (siehe `paths:` Filter), damit ein Web-PR keine 15-Minuten-iOS-Build-Queue
 auslöst. CodeQL läuft zusätzlich auf jeden Push und wöchentlich.
+
+Vercel ist der Webapp-Host. Die Root-Konfiguration `vercel.json` baut die
+Vite-App aus `webapp/` und liefert `webapp/dist` mit SPA-Rewrites aus.
+
+GitHub-Secrets für Vercel:
+
+```text
+VERCEL_TOKEN
+VERCEL_ORG_ID
+VERCEL_PROJECT_ID
+VITE_SUPABASE_ANON_KEY
+```
+
+GitHub-Variablen:
+
+```text
+ENABLE_VERCEL_DEPLOY=true
+VITE_SUPABASE_URL
+VITE_ENABLE_LIVEKIT_BETA
+VITE_LIVEKIT_TOKEN_ENDPOINT
+```
+
+Hinweis: `ENABLE_VERCEL_DEPLOY` bleibt auf `false`, bis in Vercel die GitHub
+Login Connection gesetzt und ein `VERCEL_TOKEN` als GitHub Secret hinterlegt
+ist. Manuelle CLI-Deploys funktionieren unabhängig davon.
 
 Lokal alles gleichzeitig laufen lassen:
 
