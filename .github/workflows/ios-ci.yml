@@ -55,7 +55,21 @@ jobs:
         run: swiftlint --strict --config .swiftlint.yml
 
       - name: Prepare CI secrets config
-        run: cp Secrets.xcconfig.template Secrets.xcconfig
+        env:
+          SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          WEB_JOIN_BASE_URL: https://remotecameraapp.vercel.app
+          LIVEKIT_TOKEN_ENDPOINT: ${{ vars.VITE_LIVEKIT_TOKEN_ENDPOINT }}
+          LIVEKIT_BETA_ENABLED: ${{ vars.VITE_ENABLE_LIVEKIT_BETA }}
+        run: |
+          cat > Secrets.xcconfig <<EOF
+          SUPABASE_URL = ${SUPABASE_URL}
+          SUPABASE_ANON_KEY = ${SUPABASE_ANON_KEY}
+          WEB_JOIN_BASE_URL = ${WEB_JOIN_BASE_URL}
+          TEAM_ID = LPHP8KBWW8
+          LIVEKIT_TOKEN_ENDPOINT = ${LIVEKIT_TOKEN_ENDPOINT}
+          LIVEKIT_BETA_ENABLED = ${LIVEKIT_BETA_ENABLED}
+          EOF
 
       - name: Generate project
         run: xcodegen generate

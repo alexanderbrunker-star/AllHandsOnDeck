@@ -140,6 +140,48 @@ testing; native nearby viewers remain the default path.
    synchronen Countdown.
 6. Foto-Aufnahme → Web-Viewer zeigt finales Foto + "Speichern"-Button.
 
+### Happy Path Flow
+
+```mermaid
+flowchart TD
+    HostUser["User: Host"] --> HostApp["iOS App: Host mode"]
+    JoinUser["User: iOS join"] --> JoinApp["iOS App: Viewer mode"]
+    WebUser["User: Web join"] --> WebApp["Vercel Webapp: /join/:session_id"]
+
+    HostApp --> CreateSession["Create session"]
+    CreateSession --> SupabaseSessions["Supabase: sessions + session_participants"]
+    CreateSession --> SessionID["Session ID + short-lived token"]
+    SessionID --> QRCode["QR code / join link"]
+
+    QRCode --> JoinApp
+    QRCode --> WebApp
+    JoinApp --> JoinSession["Join by session_id + token"]
+    WebApp --> JoinSession
+    JoinSession --> SupabaseSessions
+
+    HostApp --> Camera["CameraService: preview frames"]
+    Camera --> P2PVideo["WebRTC P2P video stream"]
+    P2PVideo --> JoinApp
+    P2PVideo --> WebApp
+
+    HostApp --> Realtime["Supabase Realtime fallback"]
+    JoinApp --> Realtime
+    WebApp --> Realtime
+    Realtime --> SessionEvents["session_events: sync, fallback, signaling"]
+
+    HostUser --> Capture["Start timer / capture now"]
+    Capture --> HostApp
+    HostApp --> Photo["Photo capture"]
+    Photo --> PhotoBroadcast["finalPhotoAvailable event"]
+    PhotoBroadcast --> JoinApp
+    PhotoBroadcast --> WebApp
+
+    WebApp -. optional beta .-> LiveKit["LiveKit Beta token endpoint"]
+    LiveKit --> LiveRoom["LiveKit room by session_id"]
+    HostApp -. beta publish .-> LiveRoom
+    LiveRoom -. beta subscribe .-> WebApp
+```
+
 ---
 
 ## Step 4 — "Bin ich im Bild?" Vision-Hints
