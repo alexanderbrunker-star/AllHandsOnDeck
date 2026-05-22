@@ -54,6 +54,9 @@ jobs:
       - name: SwiftLint
         run: swiftlint --strict --config .swiftlint.yml
 
+      - name: Prepare CI secrets config
+        run: cp Secrets.xcconfig.template Secrets.xcconfig
+
       - name: Generate project
         run: xcodegen generate
 
