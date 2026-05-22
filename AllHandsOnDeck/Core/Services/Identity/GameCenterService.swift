@@ -38,4 +38,3 @@ final class GameCenterService: ObservableObject {
         GKAchievement.report([achievement]) { _ in }
     }
 }
-
