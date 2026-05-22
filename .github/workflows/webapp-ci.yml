@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - 'webapp/**'
+      - 'vercel.json'
       - '.github/workflows/webapp-ci.yml'
   pull_request:
     paths:
       - 'webapp/**'
+      - 'vercel.json'
       - '.github/workflows/webapp-ci.yml'
 
 permissions:
