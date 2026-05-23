@@ -9,7 +9,6 @@ struct HostSessionView: View {
     @State private var zoomHideTask: Task<Void, Never>?
     @AppStorage("camera.showGrid")  private var showGrid: Bool = true
     @AppStorage("camera.showLevel") private var showLevel: Bool = true
-    @AppStorage("debug.showOverlays") private var showDebugOverlays = true
     @State private var crewOpen = false
     let onSessionCreated: (String) -> Void
     let onClose: () -> Void
@@ -108,11 +107,8 @@ struct HostSessionView: View {
                     .transition(.opacity)
             }
 
-            if showDebugOverlays && !isPhotoReviewActive && !showSettings {
-                DebugOverlayView()
-            }
-
         }
+
         .overlay(alignment: .top) {
             if !isPhotoReviewActive && !showSettings {
                 topBar
@@ -221,9 +217,7 @@ struct HostSessionView: View {
     private var sessionPopups: some View {
         VStack(spacing: 12) {
             if crewOpen {
-                topBar
-                    .hidden()
-                    .allowsHitTesting(false)
+                Spacer().frame(height: 60)
                 crewPopup
             }
 

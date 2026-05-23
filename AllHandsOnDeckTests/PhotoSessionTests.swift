@@ -7,7 +7,7 @@ final class PhotoSessionTests: XCTestCase {
         let alphabet = Set("ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
         for _ in 0..<200 {
             let id = PhotoSession.makeShortID()
-            XCTAssertEqual(id.count, 10)
+            XCTAssertEqual(id.count, 8)
             for ch in id {
                 XCTAssertTrue(alphabet.contains(ch),
                               "Forbidden char \(ch) in \(id)")
@@ -25,7 +25,7 @@ final class PhotoSessionTests: XCTestCase {
         for _ in 0..<10_000 {
             seen.insert(PhotoSession.makeShortID())
         }
-        // 32^10 search space → collision probability negligible at 10k.
+        // 32^8 search space → collision probability negligible at 10k.
         XCTAssertEqual(seen.count, 10_000)
     }
 

@@ -20,3 +20,4 @@ dist/
 .claude/
 .DS_Store
 Secrets.xcconfig
+.vercel

@@ -1,3 +1,4 @@
+import { logger } from './lib/logger';
 import type { WireEnvelope, WireEvent, PhotoSessionDTO } from './wire';
 import { applyEvent, initialState, type SessionState, type SessionStatus } from './sessionState';
 import { joinSession, type ParticipantRow, type SessionBootstrap } from './services/sessionService';
@@ -65,6 +66,7 @@ export class SessionClient {
 
   async connect() {
     if (this.status !== 'idle') return;
+    logger.info('SessionClient', 'Connecting', { sessionId: this.sessionId, displayName: this.displayName });
     this.state = { ...this.state, status: 'connecting' };
     this.notify();
 
@@ -76,6 +78,7 @@ export class SessionClient {
         displayName: this.displayName,
         peerId: this.participantId,
       });
+      logger.info('SessionClient', 'Connected', { sessionId: this.bootstrap.session.id });
       this.applyBootstrap(this.bootstrap);
 
       this.realtimeSub = subscribeToSessionRealtime({
@@ -93,13 +96,15 @@ export class SessionClient {
       await this.announceJoin();
       this.state = { ...this.state, status: 'connected' };
       this.notify();
-    } catch {
+    } catch (e) {
+      logger.error('SessionClient', 'Connect failed', { error: String(e) });
       this.state = { ...this.state, status: 'notFound' };
       this.notify();
     }
   }
 
   disconnect() {
+    logger.info('SessionClient', 'Disconnecting');
     if (this.realtimeSub) {
       void this.realtimeSub.unsubscribe();
       this.realtimeSub = undefined;
@@ -145,6 +150,8 @@ export class SessionClient {
 
   private async send(event: WireEvent) {
     if (!this.bootstrap) return;
+    const type = eventType(event);
+    logger.info('SessionClient', 'Sending event', { type });
     const env: WireEnvelope = {
       sessionId: this.sessionId,
       senderId: this.participantId,
@@ -153,15 +160,19 @@ export class SessionClient {
     };
     this.peer?.sendWireEvent(event, this.sessionId);
     const clientGeneratedId = uuid();
-    await getSupabaseClient()
-      .from('session_events')
-      .insert({
-        session_id: this.bootstrap.session.id,
-        sender_participant_id: this.bootstrap.participant.id,
-        type: eventType(event),
-        payload: env,
-        client_generated_id: clientGeneratedId,
-      });
+    try {
+      await getSupabaseClient()
+        .from('session_events')
+        .insert({
+          session_id: this.bootstrap.session.id,
+          sender_participant_id: this.bootstrap.participant.id,
+          type,
+          payload: env,
+          client_generated_id: clientGeneratedId,
+        });
+    } catch (e) {
+      logger.error('SessionClient', 'Send failed', { type, error: String(e) });
+    }
   }
 
   // ── Inbound ────────────────────────────────────────────────────────────────
@@ -290,7 +301,8 @@ export class SessionClient {
   }
 
   private b64ToBlob(b64: string, type: string): Blob {
-    const arr = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const clean = b64.replace(/^data:image\/\w+;base64,/, '');
+    const arr = Uint8Array.from(atob(clean), c => c.charCodeAt(0));
     return new Blob([arr], { type });
   }
 }

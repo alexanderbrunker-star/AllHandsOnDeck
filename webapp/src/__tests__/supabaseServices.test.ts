@@ -3,11 +3,11 @@ import { createSessionCode, makePhotoStoragePath, normalizeSessionCode } from '.
 import { EventDeduper } from '../services/realtimeService';
 
 describe('Supabase service helpers', () => {
-  it('generates six character human-readable session codes', () => {
+  it('generates eight character human-readable session codes', () => {
     const code = createSessionCode(() => 0);
 
-    expect(code).toBe('AAAAAA');
-    expect(createSessionCode()).toMatch(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/);
+    expect(code).toBe('AAAAAAAA');
+    expect(createSessionCode()).toMatch(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8}$/);
   });
 
   it('normalizes user-entered session codes', () => {

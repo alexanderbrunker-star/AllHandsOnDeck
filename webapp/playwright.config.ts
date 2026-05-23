@@ -9,7 +9,7 @@ export default defineConfig({
     viewport: { width: 390, height: 844 },
   },
   webServer: {
-    command: "VITE_ENABLE_LIVEKIT_BETA=false VITE_SUPABASE_URL= VITE_SUPABASE_ANON_KEY= VITE_LIVEKIT_TOKEN_ENDPOINT= npx vite --port 5173",
+    command: "npx vite --port 5173",
     url: "http://localhost:5173",
     reuseExistingServer: true,
   },

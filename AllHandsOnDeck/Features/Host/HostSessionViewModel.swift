@@ -28,7 +28,6 @@ final class HostSessionViewModel: ObservableObject {
     /// and lets the view dismiss back to Home.
     @Published private(set) var didExpire: Bool = false
     private var expiryTask: Task<Void, Never>?
-    private var mockFrameTask: Task<Void, Never>?
 
     let camera: CameraService
     let countdown: CountdownCoordinator
@@ -41,10 +40,6 @@ final class HostSessionViewModel: ObservableObject {
     private var isWritingFrame = false
     private let watchTrigger = PassthroughSubject<Void, Never>()
     private var isStarted = false
-
-    /// Held strongly so the published track stays live for the session lifetime.
-    /// Only constructed when LiveKit beta is enabled and the session allows web join.
-    private var liveKitPublisher: LiveKitHostPublisher?
 
     // MARK: - Init
 
@@ -72,7 +67,7 @@ final class HostSessionViewModel: ObservableObject {
             displayName: hostName,
             role: .host,
             isReady: true,
-            connectionType: SessionManager.isMockPreferred ? .mock : .nativeNearby
+            connectionType: .nativeNearby
         )
         participants = [hostParticipant]
         session.participants = [hostParticipant]
@@ -109,50 +104,6 @@ final class HostSessionViewModel: ObservableObject {
             try await transport.start(session: session)
         } catch {
             errorMessage = "Session konnte nicht gestartet werden."
-        }
-
-        // LiveKit beta path: when the build opts in AND this session allows web
-        // joiners, publish the camera feed to a LiveKit room so the webapp's
-        // <LiveKitVideo> viewer can subscribe. Strictly additive — the existing
-        // Supabase JPEG preview keeps flowing for native peers and as a fallback.
-        if LiveKitConfig.isBetaEnabled && session.allowWebJoin {
-            print("[Host] LiveKit beta enabled and web join allowed, starting publisher")
-            let publisher = LiveKitHostPublisher(
-                sessionID: session.id,
-                participantID: transport.localParticipantID
-            )
-            liveKitPublisher = publisher
-            Task { [weak self] in
-                do {
-                    print("[Host] Awaiting publisher.start()...")
-                    try await publisher.start()
-                    print("[Host] Publisher started successfully, connecting camera frames")
-                    // Only wire camera frames AFTER publisher is ready to receive them,
-                    // to avoid dropping frames during startup race condition.
-                    await MainActor.run {
-                        self?.camera.sampleBufferConsumer = { [weak publisher] buffer in
-                            publisher?.ingest(sampleBuffer: buffer)
-                        }
-                    }
-                } catch {
-                    // Non-fatal: the native preview path keeps working. We surface
-                    // the error so the dev console catches it but don't block the
-                    // session UI on a LiveKit failure.
-                    print("[Host] Publisher error: \(error.localizedDescription)")
-                    await MainActor.run {
-                        self?.errorMessage = "LiveKit beta unavailable: \(error.localizedDescription)"
-                    }
-                }
-            }
-        } else {
-            print("[Host] LiveKit beta not enabled (beta=\(LiveKitConfig.isBetaEnabled), webJoin=\(session.allowWebJoin))")
-        }
-
-        // In mock mode, generate synthetic preview frames since the
-        // simulator camera doesn't produce real ones. Start AFTER the
-        // transport so broadcastPreviewFrame has a connected channel.
-        if SessionManager.isMockPreferred {
-            startMockFrameStream()
         }
 
         transport.events
@@ -216,53 +167,15 @@ final class HostSessionViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Mock frame stream
-
-    /// Generates synthetic preview frames at ~3 fps when the simulator camera
-    /// doesn't produce real frames. Only active in DEBUG + mock mode.
-    private func startMockFrameStream() {
-        mockFrameTask = Task { [weak self] in
-            let imageSize = CGSize(width: 640, height: 480)
-            let renderer = UIGraphicsImageRenderer(size: imageSize)
-            var hue: CGFloat = 0
-
-            while !Task.isCancelled {
-                guard let host = self else { break }
-                hue = hue.truncatingRemainder(dividingBy: 1.0) + 0.03
-                let tint = UIColor(hue: hue, saturation: 0.6, brightness: 0.9, alpha: 1)
-
-                let jpeg = renderer.jpegData(withCompressionQuality: 0.7) { ctx in
-                    let rect = CGRect(origin: .zero, size: imageSize)
-                    tint.setFill()
-                    ctx.fill(rect)
-                    let label = NSString(string: "Crew Preview LIVE")
-                    label.draw(at: CGPoint(x: 160, y: 200),
-                               withAttributes: [
-                                .foregroundColor: UIColor.black,
-                                .font: UIFont.boldSystemFont(ofSize: 32)
-                               ])
-                }
-
-                await host.broadcastPreviewFrame(jpeg)
-                try? await Task.sleep(nanoseconds: 330_000_000)
-            }
-        }
-    }
     /// Called either by `HostSessionRetention` after the 10s park window or
     /// directly when the session expires.
     func shutdown() {
         guard isStarted else { return }
         isStarted = false
         expiryTask?.cancel()
-        mockFrameTask?.cancel()
         reactionDismissTask?.cancel()
         camera.previewFrameConsumer = nil
-        camera.sampleBufferConsumer = nil
         camera.stop()
-        if let publisher = liveKitPublisher {
-            liveKitPublisher = nil
-            Task { await publisher.stop() }
-        }
         Task { await transport.send(.sessionEnded) }
         transport.stop()
     }
