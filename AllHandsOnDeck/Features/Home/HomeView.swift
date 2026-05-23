@@ -13,9 +13,6 @@ struct HomeView: View {
     @State private var deepLinkSession: PhotoSession?
     @State private var allowWebJoin: Bool = UserDefaults.standard.bool(forKey: "allowWebJoinDefault")
     @State private var jokeIndex: Int = 0
-    #if DEBUG
-    @State private var useMock: Bool = SessionManager.isMockPreferred
-    #endif
 
     var body: some View {
         NavigationStack {
@@ -75,11 +72,8 @@ struct HomeView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                StatusPill(label: "by Captain Leopard", systemImage: "flag.fill", tint: Theme.gold)
+                StatusPill(label: "vibecoded with ❤️ by Captain Leopard", systemImage: "flag.fill", tint: Theme.gold)
                 Spacer()
-                #if DEBUG
-                mockToggle
-                #endif
                 Button { showingIdentity = true } label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 16, weight: .semibold))
@@ -201,31 +195,6 @@ struct HomeView: View {
         if available { return DesignLabels.webViewersReady }
         return DesignLabels.webViewersMissingConfig
     }
-
-    #if DEBUG
-    private var mockToggle: some View {
-        HStack(spacing: 6) {
-            Image(systemName: useMock ? "ladybug.fill" : "antenna.radiowaves.left.and.right")
-                .font(.system(size: 11, weight: .heavy))
-            Text(useMock ? "MOCK" : "MULTIPEER")
-                .font(.system(size: 11, weight: .heavy, design: .rounded))
-                .tracking(1.0)
-        }
-        .foregroundStyle(useMock ? Theme.amber : Theme.signal)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background((useMock ? Theme.amber : Theme.signal).opacity(0.15))
-        .overlay(
-            Capsule().stroke((useMock ? Theme.amber : Theme.signal).opacity(0.4), lineWidth: 1)
-        )
-        .clipShape(Capsule())
-        .onTapGesture {
-            useMock.toggle()
-            SessionManager.setMockPreferred(useMock)
-            Haptics.tap()
-        }
-    }
-    #endif
 
     private let pirateJokes: [String] = [
         "Why is pirating so addictive? Lose one hand and ye get hooked!",

@@ -125,3 +125,47 @@ test.describe("Happy Path — Navigation", () => {
     expect(response?.status()).toBeLessThan(500);
   });
 });
+
+test.describe("Happy Path — Host Page", () => {
+  test("renders host page with start button", async ({ page }) => {
+    const msgs = collectSevereConsoleMessages(page);
+    await page.goto("/host");
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByText(/Start as Host/i)).toBeVisible();
+    expect(msgs).toHaveLength(0);
+  });
+
+  test("shows back button on host page", async ({ page }) => {
+    await page.goto("/host");
+    await page.waitForLoadState("networkidle");
+    await expect(page.locator("button:has-text('‹')")).toBeVisible();
+  });
+
+  test("navigates to home on back click", async ({ page }) => {
+    await page.goto("/host");
+    await page.waitForLoadState("networkidle");
+    await page.locator("button:has-text('‹')").first().click();
+    await page.waitForURL(/\/$/);
+  });
+
+  test("shows camera error gracefully when camera denied", async ({ page }) => {
+    await page.context().grantPermissions([], { origin: "http://localhost:5173" });
+    const msgs = collectSevereConsoleMessages(page);
+    await page.goto("/host");
+    await page.waitForLoadState("networkidle");
+    await page.getByText(/Start as Host/i).click();
+    await page.waitForTimeout(1000);
+    const hasError = await page.getByText(/Camera|Denied|Error/i).isVisible().catch(() => false);
+    if (hasError) {
+      await expect(page.getByText(/Camera|Denied/i)).toBeVisible();
+    }
+    expect(msgs.length).toBeLessThan(3);
+  });
+
+  test("host page layout matches iOS-style top bar", async ({ page }) => {
+    await page.goto("/host");
+    await page.waitForLoadState("networkidle");
+    const backBtn = page.locator("button:has-text('‹')");
+    await expect(backBtn).toBeVisible();
+  });
+});

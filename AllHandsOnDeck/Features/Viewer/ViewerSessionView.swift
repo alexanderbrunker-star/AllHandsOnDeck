@@ -7,7 +7,6 @@ enum ViewerPreviewLayout {
 struct ViewerSessionView: View {
     @StateObject private var vm: ViewerSessionViewModel
     @State private var crewOpen = false
-    @AppStorage("debug.showOverlays") private var showDebugOverlays = true
 
     init(session: PhotoSession, displayName: String) {
         _vm = StateObject(wrappedValue: ViewerSessionViewModel(
@@ -71,9 +70,6 @@ struct ViewerSessionView: View {
                     .transition(.scale.combined(with: .opacity))
             }
 
-            if showDebugOverlays {
-                DebugOverlayView()
-            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)

@@ -8,7 +8,7 @@ import {
 } from './sessionPolicy';
 
 const SESSION_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-const SESSION_CODE_LENGTH = 6;
+const SESSION_CODE_LENGTH = 8;
 
 export type SessionRole = 'host' | 'guest' | 'viewer';
 

@@ -107,8 +107,6 @@ final class SupabaseSessionTransport: SessionTransport {
               let supabaseSessionID,
               Self.isConfigured else { return }
 
-        if event.isMediaEvent { return }
-
         let envelope = SessionWireMessage(
             sessionId: session.id,
             senderId: localParticipantID,
@@ -131,10 +129,7 @@ final class SupabaseSessionTransport: SessionTransport {
                 preferRepresentation: true,
                 response: [SupabaseInsertedID].self
             )
-            DebugSessionState.shared.recordSupabaseWrite(success: true)
-        } catch {
-            DebugSessionState.shared.recordSupabaseWrite(success: false)
-        }
+        } catch { }
     }
 
     // MARK: - Session bootstrap
@@ -220,7 +215,6 @@ final class SupabaseSessionTransport: SessionTransport {
 
     private func pollEvents() async {
         guard let supabaseSessionID else { return }
-        DebugSessionState.shared.recordSupabaseMsgsPoll()
         var queryItems = [
             URLQueryItem(name: "select", value: "*"),
             URLQueryItem(name: "session_id", value: "eq.\(supabaseSessionID)"),
@@ -239,7 +233,6 @@ final class SupabaseSessionTransport: SessionTransport {
                 preferRepresentation: false,
                 response: [SupabaseEventRow].self
             )
-            DebugSessionState.shared.recordSupabaseRead(success: true)
             for row in rows where !seenEventIDs.contains(row.id) {
                 seenEventIDs.insert(row.id)
                 lastEventCreatedAt = row.createdAt
@@ -251,9 +244,7 @@ final class SupabaseSessionTransport: SessionTransport {
                     seenEventIDs.remove(id)
                 }
             }
-        } catch {
-            DebugSessionState.shared.recordSupabaseRead(success: false)
-        }
+        } catch { }
     }
 
     // MARK: - HTTP

@@ -12,11 +12,6 @@ options:
   developmentLanguage: en
   organizationName: "Alexander Brunker"
 
-# ─── Swift Package dependencies ──────────────────────────────────────────────
-packages:
-  LiveKit:
-    url: https://github.com/livekit/client-sdk-swift
-    from: "2.0.0"
 
 # ─── Shared build settings ───────────────────────────────────────────────────
 settings:
@@ -47,8 +42,8 @@ targets:
     info:
       path: AllHandsOnDeck/Resources/Info.plist
       properties:
-        CFBundleName: Crew Photo
-        CFBundleDisplayName: Crew Photo
+        CFBundleName: All Hands On Deck
+        CFBundleDisplayName: All Hands
         NSCameraUsageDescription: "All Hands On Deck uses the camera to stream a live viewfinder to your crew and to scan QR codes for joining sessions."
         NSPhotoLibraryAddUsageDescription: "Saves the final crew photo to your photo library."
         SUPABASE_URL: $(SUPABASE_URL)
@@ -94,7 +89,6 @@ targets:
     dependencies:
       - sdk: GameKit.framework
         embed: false
-      - package: LiveKit
 
     # dependencies:                        # ── re-enable Watch ──
     #   - target: AllHandsOnDeckWatch

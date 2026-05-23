@@ -6,8 +6,6 @@ import { getOrAssignRank } from './pirateRank';
 import { getDebugState } from './debugState';
 import { ConnectionLostPage } from './ConnectionLostPage';
 import { DesignLabels } from './DesignLabels';
-import { LiveKitVideo } from './LiveKitVideo';
-import { isLiveKitBetaEnabled } from './lib/livekit/livekitClient';
 
 // Isolated frame viewer — updates img.src via DOM ref so the parent never
 // re-renders at 3fps. Only re-renders once when the first frame arrives.
@@ -77,7 +75,6 @@ export function JoinPage() {
   const [dismissedPhoto, setDismissedPhoto] = useState(false);
   const [crewOpen, setCrewOpen] = useState(false);
   const [debugOpen, setDebugOpen] = useState(false);
-  const [liveVideoActive, setLiveVideoActive] = useState(false);
   const [, debugTick] = useState(0);
   const tickRef = useRef<number | null>(null);
 
@@ -142,14 +139,7 @@ export function JoinPage() {
 
   return (
     <div className="preview-stage">
-      {!liveVideoActive && <FrameImage client={client} />}
-      {isLiveKitBetaEnabled() && (
-        <LiveKitVideo
-          sessionId={sessionId ?? ''}
-          participantId={client.participantId}
-          onVideoActiveChange={setLiveVideoActive}
-        />
-      )}
+      <FrameImage client={client} />
 
       <div className="scrim-top" />
       <div className="scrim-bottom" />

@@ -21,10 +21,6 @@ export const DesignLabels = {
   allowAccess: 'Allow Access',
   join: 'Join',
   connect: 'Connect',
-  liveBetaJoin: 'Join Live Beta',
-  liveBetaStart: 'Start Live Beta',
-  liveBetaLeave: 'Leave Live Beta',
-  liveBetaUnavailable: 'Live Beta is unavailable right now.',
 
   timer: (s: number) => `Start ${s}s`,
 
@@ -55,6 +51,23 @@ export const DesignLabels = {
 
   // Home
   startCrewPhoto: 'Start Crew Photo',
+  startAsHost: 'Start as Host',
+  hostCamera: 'Your Camera',
+  hostSessionCode: 'Session Code',
+  hostViewers: 'Viewers',
+  hostEndSession: 'End Session',
+  hostNoViewers: 'No viewers yet — share the code above',
+  hostCountdown: (s: number) => `${s}`,
+  hostPhotoReady: 'Photo ready!',
+  hostSendToViewers: 'Send to Viewers',
+  settings: 'Settings',
+  settingsHint: 'Open timer, permissions, grid and HD options',
+  hideQRCode: 'Hide QR code',
+  showQRCode: 'Show QR code',
+  qrToggleHint: 'Lets crew members scan to join the session',
+  backHint: 'Returns to the home screen',
+
+  // Home
   joinSession: 'Join Session',
   nearbySessions: 'Nearby Sessions',
   betaBadge: 'BETA',
@@ -81,7 +94,7 @@ export const DesignLabels = {
   nearbyHostStarting: (name: string) => `${name} is starting a crew photo`,
 
   // Home
-  byCaptainLeopard: 'by Captain Leopard',
+  byCaptainLeopard: 'vibecoded with ❤️ by Captain Leopard',
   appName: 'All Hands On Deck',
   homeSubtitle: "Web viewer for Captain's live crew photo session.\nEnter the code below or scan the Captain's QR code.",
   sessionCodePlaceholder: 'ABCDEF1234',
