@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startCamera, type CameraCapture } from './CameraCapture';
-import { HostClient, type HostState } from './HostClient';
+import { CaptainClient, type CaptainState } from './CaptainClient';
 import { DesignLabels } from './DesignLabels';
 import { QRCodePanel } from './components/QRCodePanel';
 
 const TIMER_OPTIONS = [5, 10, 20, 30];
-type TriggerPermission = 'hostOnly' | 'everyoneCanStartTimer' | 'viewersCanRequest';
+type TriggerPermission = 'captainOnly' | 'everyoneCanStartTimer' | 'viewersCanRequest';
 
-export function HostPage() {
+export function CaptainPage() {
   const navigate = useNavigate();
   const [camera, setCamera] = useState<CameraCapture | null>(null);
   const [camError, setCamError] = useState<string | null>(null);
-  const [state, setState] = useState<HostState | null>(null);
+  const [state, setState] = useState<CaptainState | null>(null);
   const [flash, setFlash] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
-  const [crewOpen, setCrewOpen] = useState(false);
+  const [pirateOpen, setPirateOpen] = useState(false);
   const [showQR, setShowQR] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [timerDuration, setTimerDuration] = useState(10);
@@ -24,7 +24,7 @@ export function HostPage() {
   const [frameWidth, setFrameWidth] = useState(240);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const client = useMemo(() => new HostClient(), []);
+  const client = useMemo(() => new CaptainClient(), []);
 
   useEffect(() => {
     const unsub = client.subscribe(setState);
@@ -45,7 +45,7 @@ export function HostPage() {
       try {
         const cam = await startCamera();
         setCamera(cam);
-        await client.startSession('Host');
+        await client.startSession('Captain');
       } catch (e: unknown) {
         if (e instanceof DOMException && e.name === 'NotAllowedError') {
           setCamError('Camera access denied.');
@@ -117,14 +117,14 @@ export function HostPage() {
           <div className="scrim-top" />
           <div className="scrim-bottom" />
 
-          <div className="host-topbar">
-            <div className="host-topbar-row">
+          <div className="captain-topbar">
+            <div className="captain-topbar-row">
               <button className="icon-button" onClick={endSession} aria-label={DesignLabels.back}>‹</button>
               <span className="pill pill-signal">{DesignLabels.statusLive}</span>
               <div style={{ flex: 1 }} />
               <QRToggleButton show={showQR} onToggle={() => setShowQR(o => !o)} />
-              <CrewButton count={state.participants.length} open={crewOpen} onToggle={() => { setShowSettings(false); setCrewOpen(o => !o); }} />
-              <button className="icon-button" onClick={() => { const o = !showSettings; setShowSettings(o); if (o) { setCrewOpen(false); setShowQR(false); } }} aria-label={DesignLabels.settings}>⚙</button>
+              <PirateButton count={state.participants.length} open={pirateOpen} onToggle={() => { setShowSettings(false); setPirateOpen(o => !o); }} />
+              <button className="icon-button" onClick={() => { const o = !showSettings; setShowSettings(o); if (o) { setPirateOpen(false); setShowQR(false); } }} aria-label={DesignLabels.settings}>⚙</button>
             </div>
           </div>
 
@@ -157,7 +157,7 @@ export function HostPage() {
               <img src={state.finalPhotoBase64} alt="Captured" />
               <div style={{ display: 'flex', gap: 10 }}>
                 <button className="btn-secondary" onClick={() => { client.clearFinalPhoto(); setFlash(false); setCountdown(null); }}>🔄 {DesignLabels.retake}</button>
-                <button className="btn-primary" onClick={() => { const a = document.createElement('a'); a.href = state.finalPhotoBase64!; a.download = `crew-photo-${state.sessionCode}.jpg`; a.click(); }}>💾 {DesignLabels.save}</button>
+                <button className="btn-primary" onClick={() => { const a = document.createElement('a'); a.href = state.finalPhotoBase64!; a.download = `pirate-photo-${state.sessionCode}.jpg`; a.click(); }}>💾 {DesignLabels.save}</button>
               </div>
             </div>
           )}
@@ -180,9 +180,9 @@ export function HostPage() {
                   <div>
                     <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--mist)', margin: '0 0 6px' }}>Trigger Permission</p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      {(['hostOnly', 'everyoneCanStartTimer', 'viewersCanRequest'] as const).map(p => (
+                      {(['captainOnly', 'everyoneCanStartTimer', 'viewersCanRequest'] as const).map(p => (
                         <button key={p} className={p === triggerPermission ? 'btn-primary' : 'btn-secondary'} style={{ padding: '10px 14px', fontSize: 12, textAlign: 'left', justifyContent: 'flex-start' }} onClick={() => setTriggerPermission(p)}>
-                          {p === 'hostOnly' ? '👑 Host Only' : p === 'everyoneCanStartTimer' ? '👥 Crew can trigger' : '🙋 Crew asks — Host decides'}
+                          {p === 'captainOnly' ? '👑 Captain Only' : p === 'everyoneCanStartTimer' ? '👥 Pirate can trigger' : '🙋 Pirate asks — Captain decides'}
                         </button>
                       ))}
                     </div>
@@ -214,27 +214,27 @@ export function HostPage() {
             </>
           )}
 
-          {crewOpen && (
+          {pirateOpen && (
             <>
-              <div className="crew-backdrop open" onClick={() => setCrewOpen(false)} />
-              <div className="crew-panel open">
+              <div className="pirate-backdrop open" onClick={() => setPirateOpen(false)} />
+              <div className="pirate-panel open">
                 <div className="grabber" />
-                <h3>{DesignLabels.crew} ({state.participants.length})</h3>
-                <div className="crew-list">
-                  <div className="crew-row me">
-                    <span className="crew-rank">🏴‍☠️</span>
-                    <span className="crew-name">Host (You)</span>
-                    <span className="crew-conn">🌐</span>
+                <h3>{DesignLabels.pirate} ({state.participants.length})</h3>
+                <div className="pirate-list">
+                  <div className="pirate-row me">
+                    <span className="pirate-rank">🏴‍☠️</span>
+                    <span className="pirate-name">Captain (You)</span>
+                    <span className="pirate-conn">🌐</span>
                   </div>
                   {state.participants.map(p => (
-                    <div className="crew-row" key={p.id}>
-                      <span className="crew-rank">👤</span>
-                      <span className="crew-name">{p.displayName}</span>
-                      <span className="crew-conn">{p.connectionType === 'web' ? '🌐' : '📱'}</span>
+                    <div className="pirate-row" key={p.id}>
+                      <span className="pirate-rank">👤</span>
+                      <span className="pirate-name">{p.displayName}</span>
+                      <span className="pirate-conn">{p.connectionType === 'web' ? '🌐' : '📱'}</span>
                     </div>
                   ))}
                 </div>
-                {state.participants.length === 0 && <p className="muted-note" style={{ textAlign: 'center', padding: 8 }}>{DesignLabels.hostNoViewers}</p>}
+                {state.participants.length === 0 && <p className="muted-note" style={{ textAlign: 'center', padding: 8 }}>{DesignLabels.captainNoViewers}</p>}
               </div>
             </>
           )}
@@ -257,10 +257,10 @@ function QRToggleButton({ show, onToggle }: { show: boolean; onToggle: () => voi
   );
 }
 
-function CrewButton({ count, open, onToggle }: { count: number; open: boolean; onToggle: () => void }) {
+function PirateButton({ count, open, onToggle }: { count: number; open: boolean; onToggle: () => void }) {
   return (
-    <button className="icon-button" style={{ position: 'relative', background: open ? 'linear-gradient(135deg, var(--gold), var(--amber))' : undefined, borderColor: open ? 'transparent' : undefined, color: open ? 'black' : undefined }} onClick={onToggle} aria-label={DesignLabels.crew}>
-      {DesignLabels.iconCrew}
+    <button className="icon-button" style={{ position: 'relative', background: open ? 'linear-gradient(135deg, var(--gold), var(--amber))' : undefined, borderColor: open ? 'transparent' : undefined, color: open ? 'black' : undefined }} onClick={onToggle} aria-label={DesignLabels.pirate}>
+      {DesignLabels.iconPirate}
       {count > 0 && (
         <span style={{ position: 'absolute', top: -4, right: -4, width: 16, height: 16, borderRadius: '50%', background: 'linear-gradient(135deg, var(--gold), var(--amber))', color: 'black', fontSize: 9, fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {count}
@@ -271,7 +271,7 @@ function CrewButton({ count, open, onToggle }: { count: number; open: boolean; o
 }
 
 function FrameSender({ camera, client, active, quality = 0.3, frameWidth = 240 }: {
-  camera: CameraCapture; client: HostClient; active: boolean; quality?: number; frameWidth?: number;
+  camera: CameraCapture; client: CaptainClient; active: boolean; quality?: number; frameWidth?: number;
 }) {
   const ref = useRef<number | null>(null);
   useEffect(() => {
