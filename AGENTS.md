@@ -5,7 +5,7 @@
 | System | Purpose |
 |--------|-------|
 | **Linear** (captain-leopard-ai-engineering) | Project management: planning, status, progress |
-| **GitHub** (alexanderbrunker-star/all-hands-on-deck) | Code: Issues, Branches, PRs, Reviews, Tests |
+| **GitHub** (leopardcodeai/all-hands-on-deck) | Code: Issues, Branches, PRs, Reviews, Tests |
 
 ## Workflow States
 

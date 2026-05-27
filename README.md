@@ -1,8 +1,8 @@
 # All Hands on Deck
 
-[![iOS CI](https://github.com/alexanderbrunker-star/all-hands-on-deck/actions/workflows/ios-ci.yml/badge.svg)](https://github.com/alexanderbrunker-star/all-hands-on-deck/actions/workflows/ios-ci.yml)
-[![Webapp CI](https://github.com/alexanderbrunker-star/all-hands-on-deck/actions/workflows/webapp-ci.yml/badge.svg)](https://github.com/alexanderbrunker-star/all-hands-on-deck/actions/workflows/webapp-ci.yml)
-[![Server CI](https://github.com/alexanderbrunker-star/all-hands-on-deck/actions/workflows/server-ci.yml/badge.svg)](https://github.com/alexanderbrunker-star/all-hands-on-deck/actions/workflows/server-ci.yml)
+[![iOS CI](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/ios-ci.yml/badge.svg)](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/ios-ci.yml)
+[![Webapp CI](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/webapp-ci.yml/badge.svg)](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/webapp-ci.yml)
+[![Server CI](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/server-ci.yml/badge.svg)](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/server-ci.yml)
 
 > Experimental work by Captain Leopard
 > *"Everyone sees the group photo before it's taken."*
