@@ -4,6 +4,21 @@
 [![Webapp CI](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/webapp-ci.yml/badge.svg)](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/webapp-ci.yml)
 [![Server CI](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/server-ci.yml/badge.svg)](https://github.com/leopardcodeai/all-hands-on-deck/actions/workflows/server-ci.yml)
 
+```
+                              ___
+                         ___,｡o\__/
+                    ____/‾‾‾‾\_|__|_/‾‾‾‾\____
+                   /  ⚡ CAPTAIN LEOPARD ⚡  \
+                  |    (⌐■_■)  ,｡oO7  ☠️     |
+                  |    /|»\|  /‾‾‾‾‾‾\       |
+                  |     ]|[   | [AI] |  ⚙️    |
+                  |    /| |\   \_____/        |
+                  |___/_____\_________________|
+                     |  |   |  |
+                    _|__|___|__|_
+                   (___🐆🦜⚓🏴___)
+```
+
 > Experimental work by Captain Leopard
 > *"Everyone sees the group photo before it's taken."*
 
