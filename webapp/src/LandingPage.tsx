@@ -1,11 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 
-const PIRATE_NAMES = [
-  'Deckhand Mia',
-  'Boatswain Kai',
-  'Cabin Boy Joe',
-  'First Mate Lia',
+const CAPTAIN_NAMES = [
   'Captain Alex',
+  'Captain Morgan',
+  'Captain Hook',
+  'Captain Sparrow',
+  'Captain Nemo',
+  'Captain Ahab',
+  'Captain Flint',
+  'Captain Crunch',
 ];
 
 export function LandingPage() {
@@ -19,7 +22,7 @@ export function LandingPage() {
             <span className="landing-skull">☠</span>
             <div className="landing-nav-text">
               <span className="landing-nav-title">ALL HANDS ON DECK</span>
-              <span className="landing-nav-by">BY CAPTAIN LEOPARD</span>
+              <span className="landing-nav-by">by LeopardCode.AI</span>
             </div>
           </div>
           <div className="landing-nav-links">
@@ -82,7 +85,7 @@ export function LandingPage() {
           <div className="landing-feature-card">
             <span className="landing-feature-icon">👁️</span>
             <h3>Live Preview for All</h3>
-            <p>Every crew member sees exactly what the Captain sees — in real time.</p>
+            <p>Every crew member sees exactly what the host sees — in real time.</p>
           </div>
           <div className="landing-feature-card">
             <span className="landing-feature-icon">⏱️</span>
@@ -107,7 +110,7 @@ export function LandingPage() {
         <div className="landing-steps">
           <div className="landing-step">
             <span className="landing-step-num">1</span>
-            <h3>Captain opens the app</h3>
+            <h3>Host opens the app</h3>
             <p>One device becomes the camera. It shares a session code.</p>
           </div>
           <div className="landing-step">
@@ -118,7 +121,7 @@ export function LandingPage() {
           <div className="landing-step">
             <span className="landing-step-num">3</span>
             <h3>Timer counts down</h3>
-            <p>Captain or crew triggers the countdown. Everyone sees it live.</p>
+            <p>Host or crew triggers the countdown. Everyone sees it live.</p>
           </div>
           <div className="landing-step">
             <span className="landing-step-num">4</span>
@@ -131,7 +134,7 @@ export function LandingPage() {
       <footer className="landing-footer-bar">
         <div className="landing-footer-inner">
           <span>☠ ALL HANDS ON DECK</span>
-          <span>by Captain Leopard</span>
+          <span>by LeopardCode.AI</span>
           <div className="landing-footer-links">
             <a href="/privacy">Privacy</a>
             <a href="/imprint">Imprint</a>
