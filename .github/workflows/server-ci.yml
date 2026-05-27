@@ -5,12 +5,10 @@ on:
     branches: [main]
     paths:
       - 'server/**'
-      - 'Dockerfile'
       - '.github/workflows/server-ci.yml'
   pull_request:
     paths:
       - 'server/**'
-      - 'Dockerfile'
       - '.github/workflows/server-ci.yml'
 
 permissions:
@@ -59,8 +57,8 @@ jobs:
       - name: Build production image (no push)
         uses: docker/build-push-action@v7
         with:
-          context: .
-          file: Dockerfile
+          context: server/
+          file: server/Dockerfile
           push: false
           load: true
           tags: allhands-server:ci
