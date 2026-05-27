@@ -9,6 +9,30 @@
 
 iOS-first MVP for a live-viewfinder group photo. One person sets up their iPhone as the camera; everyone else sees the frame live on their devices — natively or in a browser, no installation required.
 
+---
+
+## The Experiment
+
+This app was built entirely by **vibecoding with Claude Code** — describing what we wanted, watching the AI write it, and steering iteration by iteration. No human wrote a single line of Swift, TypeScript, or SQL by hand.
+
+The bet was: can a solo developer with an idea, a capable AI coding agent, and zero budget ship a real, multi-platform app — iOS, watchOS, web — without writing code, without paying for servers, and without a team?
+
+**Stack — 100% free and open source:**
+
+| Layer | Tech | Cost |
+|-------|------|------|
+| iOS + Watch App | SwiftUI, Multipeer Connectivity, Vision | $0 |
+| Web Viewer | Vite, React, TypeScript | $0 |
+| Project Config | XcodeGen | $0 |
+| Realtime Backend | Supabase (free tier) | $0 |
+| Web Hosting | Vercel (free tier) | $0 |
+| CI / CD | GitHub Actions | $0 |
+| AI Copilot | Claude Code | Free during beta |
+
+The result: a fully functional group-photo app with live viewfinder streaming, AI-powered best-shot burst capture, face-in-frame detection, Apple Watch remote control, universal links, reactions, web viewers with no install, and a proper test suite — all without a backend bill or a single manual `git commit`.
+
+---
+
 ## Quick Start
 
 ```bash
