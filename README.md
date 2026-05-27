@@ -12,20 +12,20 @@
             ╔╝                                     ☠️                    ╚╗
            ╔╝    ,｡oO7                                 🏴                ╚╗
           ╔╝    /‾‾‾‾‾‾‾\    ┌─────────────────┐     ⚓                 ╚╗
-          ║    |  (⌐■_■)  |   │  CAPTAIN LEOPARD │                      ║
-          ║    |   /|»|\   |   │  Pirate Bot 🤖   │    ▄▄▄▄▄▄▄▄▄▄       ║
+          ║    |  (⌐■_■)  |   │  LeopardCode.AI │                      ║
+          ║    |   /|»|\   |   │  AI Agent 🐆   │    ▄▄▄▄▄▄▄▄▄▄       ║
          ╔╝     \   ]|[   /    │  AI First Mate   │   ╱          ╲     ╔╝
          ║       \_/| |\_/     └─────────────────┘   █  SHIP THE  █     ║
          ║        ═══╧═══            ⚙️ ⚡           █   PHOTO!   █     ║
         ╔╝    ~~~╱╲~~~~╱╲~~~~~~~~~~~~╱╲~~~~~~~~~    ╲          ╱     ╔╝
         ║  ~~~╱    ╲╱    ╲~~~~~~~~╱    ╲~~~~~~╲~~    ▀▀▀▀▀▀▀▀▀▀      ║
         ║ ╱                        🐆🦜           ╲~~╲              ║
-       ╔╝╱   VIBECODED WITH CLAUDE CODE             ╲  ╲            ╔╝
+       ╔╝╱   vibecoded ❤️ by LeopardCode.AI             ╲  ╲            ╔╝
        ╚══════════════════════════════════════════════════════════════╝
                          ~  ~  free & open source  ~  ~
 ```
 
-> Experimental work by Captain Leopard
+> vibecoded ❤️ by LeopardCode.AI
 > *"Everyone sees the group photo before it's taken."*
 
 iOS-first MVP for a live-viewfinder group photo. One person sets up their iPhone as the camera; everyone else sees the frame live on their devices — natively or in a browser, no installation required.
