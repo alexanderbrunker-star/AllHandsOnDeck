@@ -13,19 +13,19 @@
            ╔╝    ,｡oO7                                 🏴                ╚╗
           ╔╝    /‾‾‾‾‾‾‾\    ┌─────────────────┐     ⚓                 ╚╗
           ║    |  (⌐■_■)  |   │  LeopardCode.AI │                      ║
-          ║    |   /|»|\   |   │  AI Agent 🐆   │    ▄▄▄▄▄▄▄▄▄▄       ║
+          ║    |   /|»|\   |   │  AI Agent 🤖   │    ▄▄▄▄▄▄▄▄▄▄       ║
          ╔╝     \   ]|[   /    │  AI First Mate   │   ╱          ╲     ╔╝
          ║       \_/| |\_/     └─────────────────┘   █  SHIP THE  █     ║
          ║        ═══╧═══            ⚙️ ⚡           █   PHOTO!   █     ║
         ╔╝    ~~~╱╲~~~~╱╲~~~~~~~~~~~~╱╲~~~~~~~~~    ╲          ╱     ╔╝
         ║  ~~~╱    ╲╱    ╲~~~~~~~~╱    ╲~~~~~~╲~~    ▀▀▀▀▀▀▀▀▀▀      ║
         ║ ╱                        🐆🦜           ╲~~╲              ║
-       ╔╝╱   vibecoded ❤️ by LeopardCode.AI             ╲  ╲            ╔╝
+       ╔╝╱   vibecoded with ❤️ by LeopardCode.AI             ╲  ╲            ╔╝
        ╚══════════════════════════════════════════════════════════════╝
                          ~  ~  free & open source  ~  ~
 ```
 
-> vibecoded ❤️ by LeopardCode.AI
+> vibecoded with ❤️ by LeopardCode.AI
 > *"Everyone sees the group photo before it's taken."*
 
 iOS-first MVP for a live-viewfinder group photo. One person sets up their iPhone as the camera; everyone else sees the frame live on their devices — natively or in a browser, no installation required.
